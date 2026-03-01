@@ -24,12 +24,14 @@ def softmax(arr):
         sum += math.exp(a)
     
     for a in arr:
-        ret_arr.append(a/sum)
+        ret_arr.append(math.exp(a)/sum)
 
     return ret_arr
 
 
 policy_logits = [1,1,1]
+policy_probs = [1,1,1]
+
 def policy(mode):
     if mode=="player":
         while True:
@@ -47,25 +49,39 @@ def policy(mode):
         return input_num
 
     elif mode =="agent":
+        global policy_logits
+        global policy_probs
         policy_probs = softmax(policy_logits)
-        # reward が帰ってこないとどうしようもないです．
-        # ただ，player とロジックを分けたくないです．
-        # reward を誰に持たせるんだ？
-        # そもそも Agent class を作るしかないのか？
-        # 自分の状態を持たせるためには，どうしたらいいんだ？
-        # やっぱりクラスしかない？？
-        # そもそも，env とかで綺麗に切り分けた方がいいのか？
-        
+        print(f"policy_probs: {policy_probs}")
+        c = random.choices([0,1,2], policy_probs, k=1)
+        return random.choices([0,1,2], policy_probs, k=1)[0]
+
     else:
         return random.randint(0,2)
 
 
+lr = 0.8
+def update(action, reward):
+    global policy_logits
+    global policy_probs
+    
+    grads = [0] * len(policy_logits)
+    grads[action] = 1
+    grads = [grads[i]-policy_probs[i] for i in range(len(policy_logits))]
+    policy_logits = [policy_logits[i]+lr*reward*grads[i] for i in range(len(policy_logits))]
+    
+
 game_totals = []
+mode = "agent"
 for a in range(GAME_EPOCH):
+    policy_logits = [1,1,1]
+    policy_probs = [1,1,1]
     game_total = 0
     for i in range(GAME_LEN):
-        action = policy("player")
+        action = policy(mode)
         reward = reward_func(action, probs)
+        if mode=="agent":
+            update(action, reward)
         game_total += reward
         print(f"turn {i+1}: reward = {reward},  game_total = {game_total}")
     print("\ngame_end")
