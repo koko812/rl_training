@@ -19,7 +19,6 @@ def is_filled(grid):
             filled = False
             break
     return filled
-
     
     
 def game_result(grid):
@@ -75,7 +74,27 @@ def policy(state, mode):
         te = random.choice(gohote)
         #grid[te]=turn%2*2-1
 
+    elif mode=="itteyomi":
+        win_actions = []
+        lose_actions = []
+        for gte in gohote:
+            next_state, reward, done, winner = step((grid,turn), gte)
+            if winner != 0:
+                win_actions.append(gte)
+            next_state, reward, done, winner = step((grid,turn+1), gte)
+            if winner != 0:
+                lose_actions.append(gte)
+
+        if len(win_actions) != 0:
+            te = win_actions[0]
+        elif len(lose_actions) != 0:
+            te = lose_actions[0]
+        else:
+            te = random.choice(gohote)
+
     return te
+            
+
 
 
 def step(state, action):
@@ -109,9 +128,9 @@ while not done:
     print(f"--- turn {turn+1} ---")
 
     if turn%2 == 0:
-        action = policy(state, "player")
+        action = policy(state, "itteyomi")
     else:
-        action = policy(state, "random")
+        action = policy(state, "itteyomi")
 
     next_state, reward, done, winner = step(state, action)
     state = next_state
@@ -124,5 +143,7 @@ while not done:
 
 if winner != 0:
     print(f"the winner is {koma[winner]}")
+else:
+    print("draw")
 print("states:")
 print(states)
