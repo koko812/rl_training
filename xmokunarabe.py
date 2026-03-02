@@ -25,11 +25,17 @@ def game_result():
             return total//3
     return 0
 
+def get_gohote(grid):
+    open_math = [i for i in range(len(grid)) if grid[i]==0]
+    return open_math
+
 turn = 0
 states = [] 
 koma = {1:"X", -1:"O", 0:"."}
 while not is_filled():
     states.append((grid.copy(), turn))
+    open_math = get_gohote(states[-1])
+    print(f"open is {open_math}")
     num = input("input row, col as 12: ")
     r = int(num[0])
     c = int(num[1])
