@@ -1,0 +1,22 @@
+エラーのかほり
+--- turn 36 ---
+X X . . . O .
+X O X . O O .
+X O O X O X X
+X O O X X X O
+O X X O X O O
+X X O O X O O
+
+
+こっちは大丈夫
+--- turn 16 ---
+. . . . . . .
+. . . . . . .
+. . X . . . .
+. . O X O . .
+. O O X X . O
+O X X O X X O
+
+--- results ---
+winner is X
+total turn 16
